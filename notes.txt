@@ -1,5 +1,13 @@
-assumptions - no whitespace
+- root node children can be found by getting start and end parentheses
 
+- if there has been an even number of left and right parentheses pass and there is a comma (delimter) then it is a child of the current node
+    - use this logic to find all "children strings"
+- will need to recurse through found children to convert them to nodes
+    - if there is a single set of parentheses then you are at a leaf node
+    - if there isnt then recurse
+        - use same logic to find "children strings"
+        - check and recurse
+        - can add product of recursion to current node
 a(1,2)
 
 
