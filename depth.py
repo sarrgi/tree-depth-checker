@@ -33,7 +33,6 @@ def getPairLocations(left, right, max):
     TODO: MAx value
 
     Get location of all parentheses pairs based on left and right lists.
-    Note: Assumes len(left) == len(right).
 
     Return:
         - pairs: list of all parenthese pair locations.
@@ -81,16 +80,56 @@ def convertChild(child):
         children = (child[parens[0][0]+1:parens[1][0]]).split(",")
         for c in children:
             n.add_child(c)
+    # is not a leaf Node
+    else:
+        n = node.Node(child[:parens[0][0]])
+
+        child_text = child[parens[0][0]:]
+        # # strip end parentheses
+        # child_text = child_text[1:-1]
+        converterHelper(n, child_text)
+
+        # print(n.name)
+        # print(child_text)
 
     return n
 
-def converterHelper():
+def converterHelper(node, text):
+    # split text based
+    first_split = text.split(',', maxsplit=1)
+
+    left_l,left_r = getParenLocations(first_split[0])
+    right_l,right_r = getParenLocations(first_split[1])
+
+    print(first_split)
+    # handle left split
+    if len(left_l) == 1:
+        # issa root
+        c = first_split[0][1:]
+        node.add_child(c)
+    else:
+        # c_node = f
+        print(first_split[1])
+        # converterHelper()
+
+    #     recurse
+    print("??", first_split[1])
+    # if len(r) == 1:
+    #     # issa root
+    # l,r = getParenLocations(first_split[1])
+    # print(getPairLocations(l, r, 100000000))
+
     return -1
 
 
+
 if __name__ == "__main__":
+    leaf_regex = "[0-9]+"
+    node_regex = "[a-zA-Z]+"
+
+
     # load in file
-    file = open("test_suite/test3.txt", "r")
+    file = open("test_suite/test4.txt", "r")
     lines = file.read()
 
     left_positions, right_positions = getParenLocations(lines)
@@ -106,18 +145,19 @@ if __name__ == "__main__":
     # for child in root_children:
     #     root.add_child(child)
     #
-    # print(root_children)
+    print(root_children)
 
-    for child in root_children:
-        n = convertChild(child)
+    # for child in root_children:
+    #     n = convertChild(child)
 
         # printout
-        if type(n) == node.Node:
-            print(n.name, n.children)
-        else:
-            print("none")
+        # if type(n) == node.Node:
+        #     root.add_child(n)
+        #     print(n.name, n.children)
+        # else:
+        #     print("none")
     # recurse through children
-
+    # print(root.name, root.children)
 
 
 
