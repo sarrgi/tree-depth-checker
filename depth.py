@@ -191,7 +191,7 @@ def recursiveProcess(text):
 
         node_children = splitChildrenString(node_text)
 
-        print("pre", n.name, node_children)
+        # print("pre", n.name, node_children)
 
         for c in node_children:
             if isValue(c):
@@ -213,7 +213,7 @@ def recursiveProcess(text):
 
 
 def recursiveHelper(parent, n, text):
-    print("P:", parent.name, "N:", n.name, "-",text)
+    # print("P:", parent.name, "N:", n.name, "-",text)
 
     # set parent to nodes
     # node.set_parent(parent)
@@ -240,14 +240,35 @@ def recursiveHelper(parent, n, text):
                 l, r = getParenLocations(c)
                 node_name = c[:l[0]]
                 # create current node
-                print("?", node_name)
+                # print("?", node_name)
                 cNode = node.Node(node_name)
                 # pass current node throguh recursive helper
                 # node.add_child(recursiveHelper(node, cNode, c[l[0]:]))
 
-    print("P -> ", parent.name, parent.children)
+    # print("P -> ", parent.name, parent.children)
 
     return node
+
+
+def printOut(n, indent):
+    # print("i",n.name, indent)
+    print(indent * "   ", sep="", end="")
+    print("-> ", n.name, sep="", end="\n")
+
+    for i in n.children:
+        if type(i) == node.Node:
+            printOut(i, indent+1)
+        else:
+            if type(i) != str:
+                # TODO: FIX module occurences
+                continue
+            print((indent+1) * "   ", sep="", end="")
+            print("-> ", i)
+
+    return -1
+
+
+
 
 
 if __name__ == "__main__":
@@ -259,21 +280,30 @@ if __name__ == "__main__":
     left_positions, right_positions = getParenLocations(lines)
 
     # get the root
-    root_pos = (min(left_positions)+1, max(right_positions))
+    root_pos = (min(left_positions), max(right_positions))
     root_name = lines[:root_pos[0]]
     root = node.Node(root_name)
 
 
-    root_child_string = lines[root_pos[0]:root_pos[1]]
+    root_child_string = lines[root_pos[0]+1:root_pos[1]]
 
     print("------------------------------------------------")
-    print(root_child_string)
+    print(root.name, root_child_string)
     print("------------------------------------------------")
 
     root_children = splitChildrenString(root_child_string)
 
+    # print(len(root_children), root_child_string)
+
     for c in root_children:
-        root.add_child(recursiveProcess(c))
+        cc = recursiveProcess(c)
+        # print("CC:", cc)
+        root.add_child(cc)
+
+
+
+    printOut(root, 0)
+
 
 
     # get root children
@@ -294,9 +324,6 @@ if __name__ == "__main__":
         #     print("none")
     # recurse through children
     # print(root.name, root.children)
-
-
-
 
     # pairs = getPairLocations(left_positions, right_positions, 100000000000)
 

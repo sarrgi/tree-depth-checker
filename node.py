@@ -13,3 +13,6 @@ class Node:
 
     def set_parent(self, parent):
         self.parent = parent
+
+    # def to_string(self):
+    #     return self.name + " : " + self.children
