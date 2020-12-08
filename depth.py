@@ -112,6 +112,8 @@ def recursive_process(text):
         children = leaf_text.split(",")
         # set children to nodes children
         n.set_children(children)
+        # set to leaf node
+        n.set_leaf(True)
     else:
         # is not a leaf node
         # strip outer parens
@@ -145,6 +147,8 @@ def recursive_helper(parent, n, text):
         children = leaf_text.split(",")
         # set children to nodes children
         n.set_children(children)
+        # set to leaf node
+        n.set_leaf(True)
 
     else:
         # strip outer parens
@@ -199,13 +203,48 @@ def build_tree(input):
     return root
 
 
+def depth_count(n, depth):
+    if type(n) != node.Node:
+        return -1
+
+    if n.is_leaf:
+        return depth
+    else:
+        for c in n.children:
+            if type(c) == node.Node and not c.is_leaf:
+                depth_count(c, depth + 1)
+    # # at a leaf case
+    # if not [is_value(x.name) for x in n.children][0]:
+    #     return 1
+    #
+    # c = [depth_count(x) for x in n.children]
+    # print("r", c)
+    # return 1 + max(c)
+
+    return -1
+
+
+def min_max_depth(n):
+    # at a leaf case
+    # print(n.children)
+    if not [is_value(x.name) for x in n.children][0]:
+        return 1
+
+    c = [depth_count(x, 1) for x in n.children]
+    print("c:", c)
+
+    return 1 + min(c), 1 + max(c)
+
 
 if __name__ == "__main__":
     # load in file
-    file = open("test_suite/test1.txt", "r")
+    file = open("test_suite/test6.txt", "r")
     lines = file.read()
 
+    # build tree
     root = build_tree(lines)
 
     # printout the root
     root.print_out(0)
+
+    # print(min_max_depth(root))

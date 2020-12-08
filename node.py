@@ -1,6 +1,7 @@
 class Node:
 
     def __init__(self, name):
+        self.is_leaf = False
         self.name = name
         self.parent = -1
         self.children = []
@@ -9,7 +10,9 @@ class Node:
         """
         Add a child to node's current children
         """
-        self.children.append(child)
+        # Has a check to stop class 'module' nodes appearing
+        if type(child) == Node or type(child) == str:
+            self.children.append(child)
 
     def set_children(self, children):
         "Set the children of the node."
@@ -21,6 +24,9 @@ class Node:
         """
         self.parent = parent
 
+    def set_leaf(self, val):
+        self.is_leaf = val
+
     def print_out(self, indent_level):
         """
         TODO:
@@ -31,6 +37,8 @@ class Node:
         # printout current node
         print("".join((indent_level * "   ", "-> ", self.name)), sep="", end="\n")
 
+        # print(self.name, len(self.children))
+
         for c in self.children:
             if type(c) == Node:
                 # recurse through nodes children
@@ -38,9 +46,13 @@ class Node:
             else:
                 # avoid module type occurences - TODO: find why these exist
                 if type(c) != str:
+                    print("".join(((indent_level+1) * "   ", "-> ", "WARN", str(indent_level+1))))
                     continue
+                # print("FINE", type(c), c)
                  # printout current value
                 print("".join(((indent_level+1) * "   ", "-> ", c)), sep="", end="\n")
+
+
 
 
     # def find_max_depth(self):
