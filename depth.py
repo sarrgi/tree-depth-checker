@@ -8,7 +8,8 @@ TODO:
 import node
 import re
 
-def getParenLocations(input):
+
+def get_paren_locations(input):
     """
     Get the index loation of all paretheses of an input.
 
@@ -28,7 +29,7 @@ def getParenLocations(input):
     return left_positions, right_positions
 
 
-def getPairLocations(left, right, max):
+def get_pair_locations(left, right, max):
     """
     TODO: MAx value
 
@@ -51,103 +52,30 @@ def getPairLocations(left, right, max):
 
     return pairs
 
-def inititialTextSplit(sep):
-    """
-    TODO:
-    - based on https://stackoverflow.com/questions/2136556/in-python-how-do-i-split-a-string-and-keep-the-separators?lq=1
-    """
-    # seperate text
-    children = [x+sep for x in lines[root_pos[0]:].split(sep)]
-    # remove sep from final obj
-    children[-1] = children[-1].strip(sep)
 
-    # strip root parenthese from start and end child
-    children[0] = children[0][1:]
-    children[-1] = children[-1][:-2]
-
-    return children
-
-
-def convertChild(child):
-    n = None
-    parens = getParenLocations(child)
-
-    # is a leaf node
-    if len(parens[0]) == 1:
-        # get node name
-        n = node.Node(child[:parens[0][0]])
-        # get node children
-        children = (child[parens[0][0]+1:parens[1][0]]).split(",")
-        for c in children:
-            n.add_child(c)
-    # is not a leaf Node
-    else:
-        n = node.Node(child[:parens[0][0]])
-
-        child_text = child[parens[0][0]:]
-        # # strip end parentheses
-        # child_text = child_text[1:-1]
-        converterHelper(n, child_text)
-
-        # print(n.name)
-        # print(child_text)
-
-    return n
-
-def converterHelper(node, text):
-    # split text based
-    first_split = text.split(',', maxsplit=1)
-
-    left_l,left_r = getParenLocations(first_split[0])
-    right_l,right_r = getParenLocations(first_split[1])
-
-    print(first_split)
-    # handle left split
-    if len(left_l) == 1:
-        # issa root
-        c = first_split[0][1:]
-        node.add_child(c)
-    else:
-        # c_node = f
-        print(first_split[1])
-        # converterHelper()
-
-    #     recurse
-    print("??", first_split[1])
-    # if len(r) == 1:
-    #     # issa root
-    # l,r = getParenLocations(first_split[1])
-    # print(getPairLocations(l, r, 100000000))
-
-    return -1
-
-
-
-
-def isValue(text):
+def is_value(text):
     """
     TODO: - not recheck parens here.
 
     Determine if a text string is a value (not a node at all).
     Will be a value if it only has no parentheses.
     """
-    l, r = getParenLocations(text)
+    l, r = get_paren_locations(text)
     return len(l) == 0 and len(r) == 0
 
 
-def isLeafNode(text):
+def is_leaf_node(text):
     """
     TODO: - not recheck parens here.
 
     Determine if a text string is a leaf node.
     Will be a leaf node if it only has a single set of parentheses.
     """
-    l, r = getParenLocations(text)
+    l, r = get_paren_locations(text)
     return len(l) == 1 and len(r) == 1
 
 
-
-def splitChildrenString(text):
+def split_children_string(text):
     """
         TODO:
             - pass through delim and bracket types
@@ -171,14 +99,14 @@ def splitChildrenString(text):
     return children
 
 
-def recursiveProcess(text):
-    l, r = getParenLocations(text)
+def recursive_process(text):
+    l, r = get_paren_locations(text)
 
     # create node
     n = node.Node(text[:l[0]])
 
     # check if leaf node
-    if isLeafNode(text):
+    if is_leaf_node(text):
         # get children
         leaf_text = text[l[0]+1:r[0]]
         children = leaf_text.split(",")
@@ -189,39 +117,30 @@ def recursiveProcess(text):
         # strip outer parens
         node_text = text[l[0]+1:-1]
 
-        node_children = splitChildrenString(node_text)
-
-        # print("pre", n.name, node_children)
+        node_children = split_children_string(node_text)
 
         for c in node_children:
-            if isValue(c):
+            if is_value(c):
                 n.add_child(c)
             else:
                 # get type of current node
-                l, r = getParenLocations(c)
+                l, r = get_paren_locations(c)
                 node_name = c[:l[0]]
                 # create current node
                 cNode = node.Node(node_name)
                 # pass current node throguh recursive helper
-                n.add_child(recursiveHelper(n, cNode, c[l[0]:]))
-
-
-        # print(n.name, node_children)
-    # print("!", n.name, n.children)
+                n.add_child(recursive_helper(n, cNode, c[l[0]:]))
 
     return n
 
 
-def recursiveHelper(parent, n, text):
-    # print("P:", parent.name, "N:", n.name, "-",text)
-
+def recursive_helper(parent, n, text):
     # set parent to nodes
-    # node.set_parent(parent)
     parent.add_child(n)
 
-    if isLeafNode(text):
+    if is_leaf_node(text):
         # get children
-        l, r = getParenLocations(text)
+        l, r = get_paren_locations(text)
         leaf_text = text[l[0]+1:r[0]]
         children = leaf_text.split(",")
         # set children to nodes children
@@ -230,82 +149,51 @@ def recursiveHelper(parent, n, text):
     else:
         # strip outer parens
         node_text = text[1:-1]
-        node_children = splitChildrenString(node_text)
+        node_children = split_children_string(node_text)
 
         for c in node_children:
-            if isValue(c):
+            if is_value(c):
                 n.add_child(c)
             else:
                 # get type of current node
-                l, r = getParenLocations(c)
+                l, r = get_paren_locations(c)
                 node_name = c[:l[0]]
                 # create current node
-                # print("?", node_name)
                 ccNode = node.Node(node_name)
-                n.add_child(recursiveHelper(n, ccNode, c[l[0]:]))
-
-                # pass current node throguh recursive helper
-                # node.add_child(recursiveHelper(node, cNode, c[l[0]:]))
-
-    # print("P -> ", parent.name, parent.children)
+                # recusrivley add children
+                n.add_child(recursive_helper(n, ccNode, c[l[0]:]))
 
     return node
 
 
-def printOut(n, indent):
-    """
-    TODO:
-        - move to node class
-        - stylable params
-    Recursively printout a node and all of it's children.
-    """
-    # print("i",n.name, indent)
-    print(indent * "   ", sep="", end="")
-    print("-> ", n.name, sep="", end="\n")
-
-    for i in n.children:
-        if type(i) == node.Node:
-            printOut(i, indent+1)
-        else:
-            if type(i) != str:
-                # TODO: FIX module occurences
-                # print("MODULE WARN")
-                continue
-            print((indent+1) * "   ", sep="", end="")
-            print("-> ", i)
-
-    return -1
-
-
 
 if __name__ == "__main__":
-
     # load in file
-    file = open("test_suite/test6.txt", "r")
+    file = open("test_suite/test5.txt", "r")
     lines = file.read()
 
-    left_positions, right_positions = getParenLocations(lines)
+    # get positions of all parens
+    left_positions, right_positions = get_paren_locations(lines)
 
-    # get the root
+    # get the root based on paren locations
     root_pos = (min(left_positions), max(right_positions))
     root_name = lines[:root_pos[0]]
     root = node.Node(root_name)
 
-
+    # get string version of root children
     root_child_string = lines[root_pos[0]+1:root_pos[1]]
+    root_children = split_children_string(root_child_string)
 
+    # program raw printout
     print("------------------------------------------------")
     print(root.name, root_child_string)
     print("------------------------------------------------")
 
-    root_children = splitChildrenString(root_child_string)
-
-    # print(len(root_children), root_child_string)
-
+    # recursively find all children of root
     for c in root_children:
-        cc = recursiveProcess(c)
+        cc = recursive_process(c)
         # print("CC:", cc)
         root.add_child(cc)
 
-
-    printOut(root, 0)
+    # printout the root
+    root.print_out(0)
