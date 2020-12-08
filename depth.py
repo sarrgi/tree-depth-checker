@@ -166,22 +166,20 @@ def recursive_helper(parent, n, text):
     return node
 
 
-
-if __name__ == "__main__":
-    # load in file
-    file = open("test_suite/test5.txt", "r")
-    lines = file.read()
-
+def build_tree(input):
+    """
+    Build entire tree based on program input.
+    """
     # get positions of all parens
-    left_positions, right_positions = get_paren_locations(lines)
+    left_positions, right_positions = get_paren_locations(input)
 
     # get the root based on paren locations
     root_pos = (min(left_positions), max(right_positions))
-    root_name = lines[:root_pos[0]]
+    root_name = input[:root_pos[0]]
     root = node.Node(root_name)
 
     # get string version of root children
-    root_child_string = lines[root_pos[0]+1:root_pos[1]]
+    root_child_string = input[root_pos[0]+1:root_pos[1]]
     root_children = split_children_string(root_child_string)
 
     # program raw printout
@@ -189,11 +187,25 @@ if __name__ == "__main__":
     print(root.name, root_child_string)
     print("------------------------------------------------")
 
+    # edge case check for tree where root is the only node
+    if [is_value(x) for x in root_children][0]:
+        root.set_children(root_children)
+        return root
+
     # recursively find all children of root
     for c in root_children:
-        cc = recursive_process(c)
-        # print("CC:", cc)
-        root.add_child(cc)
+        root.add_child(recursive_process(c))
+
+    return root
+
+
+
+if __name__ == "__main__":
+    # load in file
+    file = open("test_suite/test1.txt", "r")
+    lines = file.read()
+
+    root = build_tree(lines)
 
     # printout the root
     root.print_out(0)

@@ -41,3 +41,21 @@ class Node:
                     continue
                  # printout current value
                 print("".join(((indent_level+1) * "   ", "-> ", c)), sep="", end="\n")
+
+
+    # def find_max_depth(self):
+    #     depths = []
+    #
+    #     for c in self.children:
+    #         depths.append(c.find_max_depth(1))
+    #
+    #     return max(depths)
+    #
+    # def find_max_depth(self, depth):
+    #     if self.type == Node:
+    #         # recurse
+    #     else:
+    #         # store value
+    #
+    #
+    #     return -1
