@@ -8,6 +8,18 @@
         - use same logic to find "children strings"
         - check and recurse
         - can add product of recursion to current node
+
+
+- recursive process:
+  - create a node N
+  - get outer most pair location
+  - parse what is inside outer most pair
+  - if pure value:
+    - add to node N
+  - else if a node type:
+    - create node type NN for it
+    - repeat recursive process for this node NN
+    - add result of NN to N (and so forth further down)
 a(1,2)
 
 

@@ -7,3 +7,9 @@ class Node:
 
     def add_child(self, child):
         self.children.append(child)
+
+
+
+class Leaf:
+    def __init__(self, value):
+        self.value = value

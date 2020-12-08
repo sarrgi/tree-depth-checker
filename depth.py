@@ -123,29 +123,84 @@ def converterHelper(node, text):
 
 
 
-if __name__ == "__main__":
-    leaf_regex = "[0-9]+"
-    node_regex = "[a-zA-Z]+"
 
+
+
+def isLeafNode(text):
+    """
+    Determine if a text string is a leaf node.
+    Will be a leaf node if it only has a single set of parentheses.
+    """
+    l, r = getParenLocations(text)
+    return len(l) == 1 and len(r) == 1
+
+
+def splitChildrenString(text):
+    """
+        TODO:
+            - pass through delim and bracket types
+    """
+    paren_balance = 0
+    split_locs = [0]
+    for i, val in enumerate(text):
+        if val == '(':
+            paren_balance += 1
+        elif val == ')':
+            paren_balance -= 1
+        elif val == ',' and paren_balance == 0:
+            # found a child splitting point
+            split_locs.append(i+1)
+
+    # split into children based on index location
+    children = [text[i:j] for i,j in zip(split_locs, split_locs[1:]+[None])]
+    # strip delim at end of all but last child
+    children = [x.strip(",") for x in children]
+
+    return children
+
+
+def yaya(text):
+
+    l, r = getParenLocations(text)
+
+
+    return -1
+
+if __name__ == "__main__":
 
     # load in file
-    file = open("test_suite/test4.txt", "r")
+    file = open("test_suite/test3.txt", "r")
     lines = file.read()
 
     left_positions, right_positions = getParenLocations(lines)
 
     # get the root
-    root_pos = (min(left_positions), max(right_positions))
+    root_pos = (min(left_positions)+1, max(right_positions))
     root_name = lines[:root_pos[0]]
     root = node.Node(root_name)
 
 
+    root_child_string = lines[root_pos[0]:root_pos[1]]
+    print(root_child_string)
+    print("---------------")
+
+    root_children = splitChildrenString(root_child_string)
+
+    for i in root_children:
+        # could add to root if a leaf node?
+        print(i, isLeafNode(i))
+        if not isLeafNode(i):
+            yaya(i)
+
+
+
+
     # get root children
-    root_children = inititialTextSplit(sep="),")
+    # root_children = inititialTextSplit(sep="),")
     # for child in root_children:
     #     root.add_child(child)
     #
-    print(root_children)
+    # print(root_children)
 
     # for child in root_children:
     #     n = convertChild(child)
