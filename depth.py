@@ -241,7 +241,9 @@ def recursiveHelper(parent, n, text):
                 node_name = c[:l[0]]
                 # create current node
                 # print("?", node_name)
-                cNode = node.Node(node_name)
+                ccNode = node.Node(node_name)
+                n.add_child(recursiveHelper(n, ccNode, c[l[0]:]))
+
                 # pass current node throguh recursive helper
                 # node.add_child(recursiveHelper(node, cNode, c[l[0]:]))
 
@@ -251,6 +253,12 @@ def recursiveHelper(parent, n, text):
 
 
 def printOut(n, indent):
+    """
+    TODO:
+        - move to node class
+        - stylable params
+    Recursively printout a node and all of it's children.
+    """
     # print("i",n.name, indent)
     print(indent * "   ", sep="", end="")
     print("-> ", n.name, sep="", end="\n")
@@ -261,6 +269,7 @@ def printOut(n, indent):
         else:
             if type(i) != str:
                 # TODO: FIX module occurences
+                # print("MODULE WARN")
                 continue
             print((indent+1) * "   ", sep="", end="")
             print("-> ", i)
@@ -269,12 +278,10 @@ def printOut(n, indent):
 
 
 
-
-
 if __name__ == "__main__":
 
     # load in file
-    file = open("test_suite/test3.txt", "r")
+    file = open("test_suite/test6.txt", "r")
     lines = file.read()
 
     left_positions, right_positions = getParenLocations(lines)
@@ -301,40 +308,4 @@ if __name__ == "__main__":
         root.add_child(cc)
 
 
-
     printOut(root, 0)
-
-
-
-    # get root children
-    # root_children = inititialTextSplit(sep="),")
-    # for child in root_children:
-    #     root.add_child(child)
-    #
-    # print(root_children)
-
-    # for child in root_children:
-    #     n = convertChild(child)
-
-        # printout
-        # if type(n) == node.Node:
-        #     root.add_child(n)
-        #     print(n.name, n.children)
-        # else:
-        #     print("none")
-    # recurse through children
-    # print(root.name, root.children)
-
-    # pairs = getPairLocations(left_positions, right_positions, 100000000000)
-
-    # indent = 0
-    # for i, val in enumerate(lines):
-    #     if i in left_positions:
-    #         # print(":",i,":", sep="", end="")
-    #         indent += 1
-    #         print((indent * " -"), "\n", val, end="")
-    #     elif i in right_positions:
-    #         indent -= 1
-    #         print(val,"\n" ,sep="", end="")
-    #     else:
-    #         print(val, sep="", end="")
