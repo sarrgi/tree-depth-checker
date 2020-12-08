@@ -8,8 +8,8 @@ class Node:
     def add_child(self, child):
         self.children.append(child)
 
+    def set_children(self, children):
+        self.children = children
 
-
-class Leaf:
-    def __init__(self, value):
-        self.value = value
+    def set_parent(self, parent):
+        self.parent = parent

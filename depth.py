@@ -124,15 +124,27 @@ def converterHelper(node, text):
 
 
 
+def isValue(text):
+    """
+    TODO: - not recheck parens here.
+
+    Determine if a text string is a value (not a node at all).
+    Will be a value if it only has no parentheses.
+    """
+    l, r = getParenLocations(text)
+    return len(l) == 0 and len(r) == 0
 
 
 def isLeafNode(text):
     """
+    TODO: - not recheck parens here.
+
     Determine if a text string is a leaf node.
     Will be a leaf node if it only has a single set of parentheses.
     """
     l, r = getParenLocations(text)
     return len(l) == 1 and len(r) == 1
+
 
 
 def splitChildrenString(text):
@@ -159,12 +171,84 @@ def splitChildrenString(text):
     return children
 
 
-def yaya(text):
-
+def recursiveProcess(text):
     l, r = getParenLocations(text)
 
+    # create node
+    n = node.Node(text[:l[0]])
 
-    return -1
+    # check if leaf node
+    if isLeafNode(text):
+        # get children
+        leaf_text = text[l[0]+1:r[0]]
+        children = leaf_text.split(",")
+        # set children to nodes children
+        n.set_children(children)
+    else:
+        # is not a leaf node
+        # strip outer parens
+        node_text = text[l[0]+1:-1]
+
+        node_children = splitChildrenString(node_text)
+
+        print("pre", n.name, node_children)
+
+        for c in node_children:
+            if isValue(c):
+                n.add_child(c)
+            else:
+                # get type of current node
+                l, r = getParenLocations(c)
+                node_name = c[:l[0]]
+                # create current node
+                cNode = node.Node(node_name)
+                # pass current node throguh recursive helper
+                n.add_child(recursiveHelper(n, cNode, c[l[0]:]))
+
+
+        # print(n.name, node_children)
+    # print("!", n.name, n.children)
+
+    return n
+
+
+def recursiveHelper(parent, n, text):
+    print("P:", parent.name, "N:", n.name, "-",text)
+
+    # set parent to nodes
+    # node.set_parent(parent)
+    parent.add_child(n)
+
+    if isLeafNode(text):
+        # get children
+        l, r = getParenLocations(text)
+        leaf_text = text[l[0]+1:r[0]]
+        children = leaf_text.split(",")
+        # set children to nodes children
+        n.set_children(children)
+
+    else:
+        # strip outer parens
+        node_text = text[1:-1]
+        node_children = splitChildrenString(node_text)
+
+        for c in node_children:
+            if isValue(c):
+                n.add_child(c)
+            else:
+                # get type of current node
+                l, r = getParenLocations(c)
+                node_name = c[:l[0]]
+                # create current node
+                print("?", node_name)
+                cNode = node.Node(node_name)
+                # pass current node throguh recursive helper
+                # node.add_child(recursiveHelper(node, cNode, c[l[0]:]))
+
+    print("P -> ", parent.name, parent.children)
+
+    return node
+
 
 if __name__ == "__main__":
 
@@ -181,18 +265,15 @@ if __name__ == "__main__":
 
 
     root_child_string = lines[root_pos[0]:root_pos[1]]
+
+    print("------------------------------------------------")
     print(root_child_string)
-    print("---------------")
+    print("------------------------------------------------")
 
     root_children = splitChildrenString(root_child_string)
 
-    for i in root_children:
-        # could add to root if a leaf node?
-        print(i, isLeafNode(i))
-        if not isLeafNode(i):
-            yaya(i)
-
-
+    for c in root_children:
+        root.add_child(recursiveProcess(c))
 
 
     # get root children
