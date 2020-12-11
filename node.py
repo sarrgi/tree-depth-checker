@@ -1,6 +1,23 @@
 class Node:
+    """
+    Node object class which represents a node in the equation tree.
+
+    Params:
+        - name (str) : The name of a node.
+        - children (`list` of Nodes) : List of all children of a Node.
+        - is_leaf (bool) : Flag for is a node is a leaf. True if leaf, False if not.
+        - parent (TODO) : Not currently in use.
+    """
 
     def __init__(self, name):
+        """
+        Initiliazes a Node object with a name passed through.
+        Children is  instantiated as a an empty list.
+        Default value for Leaf is False.
+
+        Params:
+            - name (str) : The name of a node.
+        """
         self.is_leaf = False
         self.name = name
         self.parent = -1
@@ -8,14 +25,16 @@ class Node:
 
     def add_child(self, child):
         """
-        Add a child to node's current children
+        Add a child to node's current children.
         """
         # Has a check to stop class 'module' nodes appearing
         if type(child) == Node or type(child) == str:
             self.children.append(child)
 
     def set_children(self, children):
-        "Set the children of the node."
+        """
+        Set the children of the node.
+        """
         self.children = children
 
     def set_parent(self, parent):
@@ -25,6 +44,9 @@ class Node:
         self.parent = parent
 
     def set_leaf(self, val):
+        """
+        Set the leaf value of a node.
+        """
         self.is_leaf = val
 
     def print_out(self, indent_level):
