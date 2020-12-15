@@ -29,30 +29,6 @@ def get_paren_locations(input):
     return left_positions, right_positions
 
 
-def get_pair_locations(left, right, max):
-    """
-    TODO: MAx value
-
-    Get location of all parentheses pairs based on left and right lists.
-
-    Return:
-        - pairs: list of all parenthese pair locations.
-    """
-    pairs = []
-    for l_pos in reversed(left):
-        # find corresponding r_pos
-        r_pos = max
-        for r in right:
-            if r < r_pos and r > l_pos:
-                r_pos = r
-        # add pair to list and remove from input lists
-        pairs.append((l_pos, r_pos))
-        left.remove(l_pos)
-        right.remove(r_pos)
-
-    return pairs
-
-
 def is_value(text):
     """
     TODO: - not recheck parens here.
@@ -97,6 +73,10 @@ def split_children_string(text):
     children = [x.strip(",") for x in children]
 
     return children
+
+
+def remove_whitespace(text):
+    return re.sub("\s", "", text)
 
 
 def recursive_process(text):
@@ -238,8 +218,10 @@ def min_max_depth(n):
 
 if __name__ == "__main__":
     # load in file
-    file = open("test_suite/test6.txt", "r")
+    file = open("test_suite/test1.txt", "r")
     lines = file.read()
+    # pre-process whitespace
+    lines = remove_whitespace(lines)
 
     # build tree
     root = build_tree(lines)
