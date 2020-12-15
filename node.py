@@ -51,28 +51,39 @@ class Node:
 
     def print_out(self, indent_level):
         """
-        TODO:
-            - stylable params
-
         Recursively printout a node and all of it's children.
         """
         # printout current node
         print("".join((indent_level * "   ", "-> ", self.name)), sep="", end="\n")
 
+        for c in self.children:
+            if type(c) == Node:
+                c.print_out(indent_level+1)
+            else:
+                print("".join(((indent_level+1) * "   ", "-> ", c)), sep="", end="\n")
+
+
+    def print_to_file(self, file_name):
+        output_file = open(file_name, "w")
+        self.recursive_file_write(output_file, 0)
+        output_file.close()
+
+
+
+    def recursive_file_write(self, file, indent_level):
+        """
+        Recursively printout a node and all of it's children.
+        """
+        # printout current node
+        file.write("".join((indent_level * "   ", "-> ", self.name, "\n")))
+
         # print(self.name, len(self.children))
 
         for c in self.children:
             if type(c) == Node:
-                # recurse through nodes children
-                c.print_out(indent_level+1)
+                c.recursive_file_write(file, indent_level+1)
             else:
-                # avoid module type occurences - TODO: find why these exist
-                if type(c) != str:
-                    print("".join(((indent_level+1) * "   ", "-> ", "WARN", str(indent_level+1))))
-                    continue
-                # print("FINE", type(c), c)
-                 # printout current value
-                print("".join(((indent_level+1) * "   ", "-> ", c)), sep="", end="\n")
+                file.write("".join(((indent_level+1) * "   ", "-> ", c, "\n")))
 
 
 

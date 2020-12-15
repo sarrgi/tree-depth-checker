@@ -238,8 +238,10 @@ def parse_arg(arg):
         return "right_paren", arg_val
     elif arg_type == "sep" or arg_type == "separator" or arg_type == "s":
         return "separator", arg_val
+    elif arg_type == "file" or arg_type == "file_name" or arg_type == "f":
+        return "file_name", arg_val
 
-    # user has entered an unknown argument 
+    # user has entered an unknown argument
     raise Exception("Unknown parameter: " + arg_type)
 
 
@@ -259,44 +261,55 @@ def tree_params_config(arguments):
     left_paren = '('
     right_paren = ')'
     separator = ','
+    file_name = "output.txt"
 
     if len(sys.argv) > 1:
-        for arg in sys.argv:
+        for arg in sys.argv[1:]:
             arg_type, arg_val = parse_arg(arg)
             if arg_type == "left_paren": left_paren = arg_val
             elif arg_type == "right_paren": right_paren = arg_val
             elif arg_type == "separator": separator = arg_val
+            elif arg_type == "file_name": file_name = arg_val
     else:
         # let user know they are using default settings
-        print("Running with default parameters:",
+        print("---------------------------",
+              "\nRunning with default parameters:",
               "\nLeft Parentheses:", left_paren,
               "\nRight Parentheses:", right_paren,
-              "\nSeparator:", separator)
-        return (left_paren, right_paren), separator
+              "\nSeparator:", separator,
+              "\nFile Name:", file_name,
+              "\n---------------------------")
+        return (left_paren, right_paren), separator, file_name
 
     # let user know custom settings have been applied
-    print("Running with parameters:",
+    print("---------------------------",
+          "\nRunning with parameters:",
           "\nLeft Parentheses:", left_paren,
           "\nRight Parentheses:", right_paren,
-          "\nSeparator:", separator)
+          "\nSeparator:", separator,
+          "\nFile Name:", file_name,
+          "\n---------------------------")
 
-    return (left_paren, right_paren), separator
+    return (left_paren, right_paren), separator, file_name
 
 
 
 if __name__ == "__main__":
     # set up tree config
-    parens, separator = tree_params_config(sys.argv[1:])
+    parens, separator, file_name = tree_params_config(sys.argv)
 
 
     # load in file
-    file = open("test_suite/nodecode.txt", "r")
+    file = open("test_suite/node2.txt", "r")
     input = file.read()
     # pre-process whitespace
     input = remove_whitespace(input)
 
     # build tree
-    # root = build_tree(input, parens, separator)
+    root = build_tree(input, parens, separator)
 
     # printout the tree from the root
-    # root.print_out(0)
+    root.print_out(0)
+
+    # save the printout to a file
+    root.print_to_file(file_name)
