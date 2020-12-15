@@ -74,11 +74,11 @@ def remove_whitespace(text):
     return re.sub("\s", "", text)
 
 
-def recursive_process(text, separator, parens):
+def recursive_process(text, separator, parens, indent_style):
     l, r = get_paren_locations(text, parens)
 
     # create node
-    n = node.Node(text[:l[0]])
+    n = node.Node(text[:l[0]], indent_style)
 
     # check if leaf node
     if is_leaf_node(text, parens):
@@ -104,14 +104,14 @@ def recursive_process(text, separator, parens):
                 l, r = get_paren_locations(c, parens)
                 node_name = c[:l[0]]
                 # create current node
-                cNode = node.Node(node_name)
+                cNode = node.Node(node_name, indent_style)
                 # pass current node throguh recursive helper
-                n.add_child(recursive_helper(n, cNode, c[l[0]:], separator))
+                n.add_child(recursive_helper(n, cNode, c[l[0]:], separator, indent_style))
 
     return n
 
 
-def recursive_helper(parent, n, text, separator):
+def recursive_helper(parent, n, text, separator, indent_style):
     # set parent to nodes
     parent.add_child(n)
 
@@ -138,14 +138,14 @@ def recursive_helper(parent, n, text, separator):
                 l, r = get_paren_locations(c, parens)
                 node_name = c[:l[0]]
                 # create current node
-                ccNode = node.Node(node_name)
+                ccNode = node.Node(node_name, indent_style)
                 # recusrivley add children
-                n.add_child(recursive_helper(n, ccNode, c[l[0]:], separator))
+                n.add_child(recursive_helper(n, ccNode, c[l[0]:], separator, indent_style))
 
     return node
 
 
-def build_tree(input, parens, separator):
+def build_tree(input, parens, separator, indent_style):
     """
     Build entire tree based on program input.
     """
@@ -155,7 +155,7 @@ def build_tree(input, parens, separator):
     # get the root based on paren locations
     root_pos = (min(left_positions), max(right_positions))
     root_name = input[:root_pos[0]]
-    root = node.Node(root_name)
+    root = node.Node(root_name, indent_style)
 
     # get string version of root children
     root_child_string = input[root_pos[0]+1:root_pos[1]]
@@ -173,42 +173,55 @@ def build_tree(input, parens, separator):
 
     # recursively find all children of root
     for c in root_children:
-        root.add_child(recursive_process(c, separator, parens))
+        root.add_child(recursive_process(c, separator, parens, indent_style))
 
     return root
 
 
-def depth_count(n, depth):
-    if type(n) != node.Node:
-        return -1
 
+def max_depth(n, depth):
+    """
+
+    """
     if n.is_leaf:
         return depth
     else:
+        children_depth = []
         for c in n.children:
-            if type(c) == node.Node and not c.is_leaf:
-                depth_count(c, depth + 1)
-    # # at a leaf case
-    # if not [is_value(x.name) for x in n.children][0]:
-    #     return 1
-    #
-    # c = [depth_count(x) for x in n.children]
-    # print("r", c)
-    # return 1 + max(c)
+            if type(c) == node.Node:
+                children_depth.append(max_depth(c, depth + 1))
+            # else:
+            #     children_depth.append(depth+1)
+
+        if len(children_depth) > 0:
+            return max(children_depth)
+        else:
+            return 0
 
     return -1
 
 
-def min_max_depth(n):
-    # at a leaf case
-    # print(n.children)
-    if not [is_value(x.name, parens) for x in n.children][0]:
-        return 1
+def min_depth(n, depth):
+    """
 
-    c = [depth_count(x, 1) for x in n.children]
-    print("c:", c)
+    """
+    if n.is_leaf:
+        return depth
+    else:
+        children_depth = []
+        for c in n.children:
+            if type(c) == node.Node:
+                children_depth.append(min_depth(c, depth + 1))
+            # else:
+            #     children_depth.append(depth+1)
 
-    return 1 + min(c), 1 + max(c)
+        if len(children_depth) > 0:
+            return min(children_depth)
+        else:
+            return 0
+
+    return -1
+
 
 
 def parse_arg(arg):
@@ -238,6 +251,8 @@ def parse_arg(arg):
         return "right_paren", arg_val
     elif arg_type == "sep" or arg_type == "separator" or arg_type == "s":
         return "separator", arg_val
+    elif arg_type == "indent" or arg_type == "indent_style" or arg_type == "i":
+        return "indent_style", arg_val
     elif arg_type == "file" or arg_type == "file_name" or arg_type == "f":
         return "file_name", arg_val
 
@@ -261,6 +276,7 @@ def tree_params_config(arguments):
     left_paren = '('
     right_paren = ')'
     separator = ','
+    indent_style = "->"
     file_name = "output.txt"
 
     if len(sys.argv) > 1:
@@ -269,47 +285,58 @@ def tree_params_config(arguments):
             if arg_type == "left_paren": left_paren = arg_val
             elif arg_type == "right_paren": right_paren = arg_val
             elif arg_type == "separator": separator = arg_val
+            elif arg_type == "indent_style": indent_style = arg_val
             elif arg_type == "file_name": file_name = arg_val
     else:
         # let user know they are using default settings
-        print("---------------------------",
+        print("--------------------------------",
               "\nRunning with default parameters:",
               "\nLeft Parentheses:", left_paren,
               "\nRight Parentheses:", right_paren,
               "\nSeparator:", separator,
+              "\nIndent Style:", indent_style,
               "\nFile Name:", file_name,
-              "\n---------------------------")
-        return (left_paren, right_paren), separator, file_name
+              "\n--------------------------------")
+        return (left_paren, right_paren), separator, file_name, indent_style
 
     # let user know custom settings have been applied
-    print("---------------------------",
+    print("--------------------------------",
           "\nRunning with parameters:",
           "\nLeft Parentheses:", left_paren,
           "\nRight Parentheses:", right_paren,
           "\nSeparator:", separator,
+          "\nIndent Style:", indent_style,
           "\nFile Name:", file_name,
-          "\n---------------------------")
+          "\n--------------------------------")
 
-    return (left_paren, right_paren), separator, file_name
+    return (left_paren, right_paren), separator, file_name, indent_style
 
 
 
 if __name__ == "__main__":
     # set up tree config
-    parens, separator, file_name = tree_params_config(sys.argv)
-
+    parens, separator, file_name, indent_style = tree_params_config(sys.argv)
 
     # load in file
-    file = open("test_suite/node2.txt", "r")
+    file = open("test_suite/test6.txt", "r")
     input = file.read()
     # pre-process whitespace
     input = remove_whitespace(input)
 
     # build tree
-    root = build_tree(input, parens, separator)
+    root = build_tree(input, parens, separator, indent_style)
+
+    # calculate max depth of tree
+    max_depth = max_depth(root, 0)
 
     # printout the tree from the root
     root.print_out(0)
 
-    # save the printout to a file
+    # save the tree printout to a file
     root.print_to_file(file_name)
+    # save the depth printout to the same file
+    output_file = open(file_name, "a")
+    output_file.write("".join(("-----------------------------------------\nMax Depth:", str(max_depth))))
+
+
+    print("Depth:", max_depth)

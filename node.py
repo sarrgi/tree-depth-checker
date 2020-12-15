@@ -9,7 +9,7 @@ class Node:
         - parent (TODO) : Not currently in use.
     """
 
-    def __init__(self, name):
+    def __init__(self, name, indent_style):
         """
         Initiliazes a Node object with a name passed through.
         Children is  instantiated as a an empty list.
@@ -20,7 +20,7 @@ class Node:
         """
         self.is_leaf = False
         self.name = name
-        self.parent = -1
+        self.indent_style = indent_style
         self.children = []
 
     def add_child(self, child):
@@ -54,13 +54,13 @@ class Node:
         Recursively printout a node and all of it's children.
         """
         # printout current node
-        print("".join((indent_level * "   ", "-> ", self.name)), sep="", end="\n")
+        print("".join((indent_level * "   ", self.indent_style, " ", self.name)), sep="", end="\n")
 
         for c in self.children:
             if type(c) == Node:
                 c.print_out(indent_level+1)
             else:
-                print("".join(((indent_level+1) * "   ", "-> ", c)), sep="", end="\n")
+                print("".join(((indent_level+1) * "   ", self.indent_style, " ", c)), sep="", end="\n")
 
 
     def print_to_file(self, file_name):
@@ -75,7 +75,7 @@ class Node:
         Recursively printout a node and all of it's children.
         """
         # printout current node
-        file.write("".join((indent_level * "   ", "-> ", self.name, "\n")))
+        file.write("".join((indent_level * "   ", self.indent_style, " ", self.name, "\n")))
 
         # print(self.name, len(self.children))
 
@@ -83,7 +83,7 @@ class Node:
             if type(c) == Node:
                 c.recursive_file_write(file, indent_level+1)
             else:
-                file.write("".join(((indent_level+1) * "   ", "-> ", c, "\n")))
+                file.write("".join(((indent_level+1) * "   ", self.indent_style, " ", c, "\n")))
 
 
 
