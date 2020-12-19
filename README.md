@@ -2,7 +2,7 @@
 
 Simple program made for assisting in the evaluation of tree like equations, such as individuals generated in Genetic Programming algorithms. Formats the equation into a more readable tree like structure, as well as providing the maximum depth of the tree. Has the  flexibility to be adjusted to evaluate differently formatted equations.
 
-Must be given the file path of the program to evaluate as the first argument. Will print the prgoram evaluation into the console, as well as write the evaluation to a file (output.txt by default).
+Must be given the file path of the program to evaluate as the first argument. Will print the program evaluation into the console, as well as write the evaluation to a file (output.txt by default).
 
 ### Program Run Examples
 
@@ -75,10 +75,10 @@ Must be given the file path of the program to evaluate as the first argument. Wi
 | Indent Style         | i, indent, indent_style |
 
 
-#### Example Command Line Arguments:
-
-> python depth.py tree.txt
-
+#### Example Command Line Runs:
 ```
-python depth.py path/to/tree.txt l=[ right=) indent_style=--> f="eval_out.txt"
+python depth.py tree.txt
+```
+```
+python depth.py path/to/tree.txt l=[ right=) indent_style=--> f=eval_out.txt
 ```
