@@ -280,7 +280,7 @@ def tree_params_config(arguments):
     file_name = "output.txt"
 
     if len(sys.argv) > 1:
-        for arg in sys.argv[1:]:
+        for arg in sys.argv[2:]:
             arg_type, arg_val = parse_arg(arg)
             if arg_type == "left_paren": left_paren = arg_val
             elif arg_type == "right_paren": right_paren = arg_val
@@ -315,10 +315,11 @@ def tree_params_config(arguments):
 
 if __name__ == "__main__":
     # set up tree config
-    parens, separator, file_name, indent_style = tree_params_config(sys.argv)
+    parens, separator, out_file_name, indent_style = tree_params_config(sys.argv)
+    file_path = sys.argv[1]
 
     # load in file
-    file = open("test_suite/test6.txt", "r")
+    file = open(file_path, "r")
     input = file.read()
     # pre-process whitespace
     input = remove_whitespace(input)
@@ -333,9 +334,9 @@ if __name__ == "__main__":
     root.print_out(0)
 
     # save the tree printout to a file
-    root.print_to_file(file_name)
+    root.print_to_file(out_file_name)
     # save the depth printout to the same file
-    output_file = open(file_name, "a")
+    output_file = open(out_file_name, "a")
     output_file.write("".join(("-----------------------------------------\nMax Depth:", str(max_depth))))
 
 
